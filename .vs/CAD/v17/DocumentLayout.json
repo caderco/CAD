@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\\u7814\u7A76\u751F\u9879\u76EE\\CAD\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CA30C7EE-748B-40E4-A8A3-C5A3B7A2020D}|CAD\\CAD.csproj|e:\\\u7814\u7A76\u751F\u9879\u76EE\\cad\\cad\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CA30C7EE-748B-40E4-A8A3-C5A3B7A2020D}|CAD\\CAD.csproj|solutionrelative:cad\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "E:\\\u7814\u7A76\u751F\u9879\u76EE\\CAD\\CAD\\Class1.cs",
+              "RelativeDocumentMoniker": "CAD\\Class1.cs",
+              "ToolTip": "E:\\\u7814\u7A76\u751F\u9879\u76EE\\CAD\\CAD\\Class1.cs",
+              "RelativeToolTip": "CAD\\Class1.cs",
+              "ViewState": "AgIAAGIAAAAAAAAAAAAAAKUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-24T13:23:34.437Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
