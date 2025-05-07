@@ -4,6 +4,7 @@ using System.Drawing;
 using ZwSoft.ZwCAD.ApplicationServices;
 using ZwSoft.ZwCAD.EditorInput;
 using ZwSoft.ZwCAD.Runtime;
+using ZwSoft.ZwCAD.DatabaseServices;
 
 namespace MyZWCADExtension
 {
@@ -16,17 +17,16 @@ namespace MyZWCADExtension
         public string TunnelType { get; private set; }
         public double WidthValue { get; private set; }
         public double HeightValue { get; private set; }
-        public double CoordX { get; private set; }
-        public double CoordY { get; private set; }
-        public double CoordZ { get; private set; }
+        public double RadiusValue { get; private set; }
+        public double LenValue { get; private set; }   
 
         // UI控件声明
         private GroupBox grpTunnelType;
         private RadioButton rbtnTypeThree_star, rbtnTypeHalf_circle, rbtnTypeOther;
 
         private GroupBox grpDimension;
-        private Label lblWidth, lblHeight;
-        private TextBox txtWidth, txtHeight;
+        private Label lblWidth, lblLen, lblRadius, lblHeight;
+        private TextBox txtWidth, txtLen,txtRadius,txtHeight;
 
         private GroupBox grpCoordinate;
         
@@ -76,7 +76,7 @@ namespace MyZWCADExtension
                 Text = "选择坐标文件",
                 Location = new Point(50, 20),
                 Size = new Size(200, 30),
-                Font = new Font("Microsoft YaHei", 9.5f)
+                Font = new System.Drawing.Font("Microsoft YaHei", 9.5f)
             };
 
             // 点击事件
@@ -131,47 +131,45 @@ namespace MyZWCADExtension
         // 根据巷道类型更新截面尺寸框
         private void UpdateDimensionControls(string tunnelType)
         {
-            grpDimension.Controls.Clear(); // 清空原有控件
+            grpDimension.Controls.Clear();
 
-            Label lbl1 = new Label {  Location = new Point(20, 25), AutoSize = true };
-            TextBox txt1 = new TextBox { Location = new Point(80, 22), Width = 80, ImeMode = ImeMode.Disable };
-            Label lbl2 = new Label { Location = new Point(20, 60), AutoSize = true };
-            TextBox txt2 = new TextBox { Location = new Point(80, 57), Width = 80, ImeMode = ImeMode.Disable };
-            grpDimension.Controls.AddRange(new Control[] { lbl1, txt1, lbl2, txt2 });
-           
-            // 根据巷道类型调整控件
+            // 初始化公共控件并赋值给成员变量
+            lblWidth = new Label { Location = new Point(20, 25), AutoSize = true };
+            txtWidth = new TextBox { Location = new Point(80, 22), Width = 80, ImeMode = ImeMode.Disable };
+            lblLen = new Label { Location = new Point(20, 60), AutoSize = true };
+            txtLen = new TextBox { Location = new Point(80, 57), Width = 80, ImeMode = ImeMode.Disable };
+            lblRadius = new Label { Text = "半径:", Location = new Point(20, 95), AutoSize = true };
+            txtRadius = new TextBox { Location = new Point(80, 92), Width = 80, ImeMode = ImeMode.Disable };
+
+            grpDimension.Controls.AddRange(new Control[] { lblWidth, txtWidth, lblLen, txtLen, lblRadius, txtRadius });
+
             switch (tunnelType)
             {
                 case "三星形":
-                    // 三星形可能需要特定的尺寸参数
-                    Label lblradius = new Label { Text = "半径:", Location = new Point(20, 95), AutoSize = true };
-                    TextBox txtradius = new TextBox { Location = new Point(80, 92), Width = 80, ImeMode = ImeMode.Disable };
-                    grpDimension.Controls.AddRange(new Control[] { lblradius, txtradius });
-                    lbl1.Text = "宽度:";
-                    lbl2.Text = "长度:";
+                    lblWidth.Text = "宽度:";
+                    lblLen.Text = "长度:";
+                    lblRadius.Text = "半径:";
                     break;
                 case "半圆形":
-                    // 半圆形只要半径
-                    lbl1.Text = "半径:";
-                    lbl2.Visible = false;
-                    txt2.Visible = false;
+                    lblRadius.Text = "半径:";
+                    lblWidth.Visible = false;
+                    txtWidth.Visible = false;
+                    lblLen.Visible = false;
+                    txtLen.Visible = false;
                     break;
                 case "梯形":
-                    // 梯形可能需要额外的参数
-                    lbl1.Text = "上底长:";
-                    lbl2.Text = "下底长:";
-                    Label lblHeight = new Label { Text = "高度:", Location = new Point(20, 95), AutoSize = true };
-                    TextBox txtHeight = new TextBox { Location = new Point(80, 92), Width = 80, ImeMode = ImeMode.Disable };
-                    grpDimension.Controls.AddRange(new Control[] { lblHeight,txtHeight });                   
+                    lblWidth.Text = "上底长:";
+                    lblLen.Text = "下底长:";
+                    lblHeight = new Label { Text = "高度:", Location = new Point(20, 95), AutoSize = true };
+                    txtHeight = new TextBox { Location = new Point(80, 92), Width = 80, ImeMode = ImeMode.Disable };
+                    grpDimension.Controls.AddRange(new Control[] { lblHeight, txtHeight });
                     break;
             }
-
-           
         }
         // 确定按钮点击事件：验证输入有效性，赋值属性，关闭窗体返回OK
         private void BtnOK_Click(object sender, EventArgs e)
         {
-            // 判断哪个单选按钮被选中，设置巷道类型字符串
+            // 设置巷道类型
             if (rbtnTypeThree_star.Checked)
                 TunnelType = "三星形";
             else if (rbtnTypeHalf_circle.Checked)
@@ -179,29 +177,59 @@ namespace MyZWCADExtension
             else
                 TunnelType = "梯形";
 
-            // 宽度输入验证
-            if (!double.TryParse(txtWidth.Text, out double width))
+            try
             {
-                MessageBox.Show("宽度请输入有效数字。", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtWidth.Focus();
-                return;
-            }
-            // 高度输入验证
-            if (!double.TryParse(txtHeight.Text, out double height))
-            {
-                MessageBox.Show("高度请输入有效数字。", "输入错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtHeight.Focus();
-                return;
-            }
-           
+                // 验证半径（所有类型都需要）
+                if (!double.TryParse(txtRadius.Text, out double radius) || radius <= 0)
+                {
+                    MessageBox.Show("请输入有效的半径值（正数）。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtRadius.Focus();
+                    return;
+                }
+                RadiusValue = radius;
 
-            // 验证通过后，赋值给公开属性供外部访问
-            WidthValue = width;
-            HeightValue = height;
-           
-            // 关闭窗体，返回OK结果
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                // 根据类型验证其他字段
+                if (TunnelType != "半圆形")
+                {
+                    if (!double.TryParse(txtWidth.Text, out double width) || width <= 0)
+                    {
+                        MessageBox.Show("请输入有效的宽度值（正数）。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtWidth.Focus();
+                        return;
+                    }
+                    if (!double.TryParse(txtLen.Text, out double len) || len <= 0)
+                    {
+                        MessageBox.Show("请输入有效的长度值（正数）。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtLen.Focus();
+                        return;
+                    }
+                    WidthValue = width;
+                    LenValue = len;
+                }
+
+                // 梯形需要额外验证高度
+                if (TunnelType == "梯形" && txtHeight != null)
+                {
+                    if (!double.TryParse(txtHeight.Text, out double height) || height <= 0)
+                    {
+                        MessageBox.Show("请输入有效的高度值（正数）。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        txtHeight.Focus();
+                        return;
+                    }
+                    HeightValue = height;
+                }
+                else
+                {
+                    HeightValue = 0;
+                }
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (NullReferenceException ex)
+            {
+                MessageBox.Show($"控件未正确初始化: {ex.Message}", "严重错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 
@@ -215,8 +243,9 @@ namespace MyZWCADExtension
         public string Thickness { get; private set; }
 
         private GroupBox grpCoal_Bed;
-        private Label lbWidth_Coal_Bed, lbLength, lbThickness, lbAngle, lbTowards;
-        private TextBox txtWidth_Coal_Bed, txtLength;
+        private Label lbWidth_Coal_Bed, lbLength, lbThickness, lbAngle, lbTowards;//宽度，长度，厚度，倾角，走向
+        private TextBox txtWidth_Coal_Bed, txtLength, txtThickness,txtAngle,txtTowards;
+        private Button btn1OK, btn1Cancel;
 
 
         public Coal_Bed_MakeForm()
@@ -236,6 +265,20 @@ namespace MyZWCADExtension
             lbWidth_Coal_Bed = new Label() { Text = "宽度:", Location = new Point(20, 25), AutoSize = true };
             txtWidth_Coal_Bed = new TextBox() { Location = new Point(80, 22), Width = 180, ImeMode = ImeMode.Disable };
             lbLength = new Label() { Text = "长度:", Location = new Point(20, 60), AutoSize = true };
+            txtLength = new TextBox() { Location = new Point(80, 22), Width = 180, ImeMode = ImeMode.Disable };
+            lbThickness = new Label() { Text = "厚度:", Location = new Point(20, 25), AutoSize = true };
+            txtThickness = new TextBox() { Location = new Point(80, 22), Width = 180, ImeMode = ImeMode.Disable };
+            lbAngle = new Label() { Text = "倾角:", Location = new Point(20, 25), AutoSize = true };
+            txtAngle = new TextBox() { Location = new Point(80, 22), Width = 180, ImeMode = ImeMode.Disable };
+            lbTowards = new Label() { Text = "走向:", Location = new Point(20, 25), AutoSize = true };
+            txtTowards = new TextBox() { Location = new Point(80, 22), Width = 180, ImeMode = ImeMode.Disable };
+            grpCoal_Bed.Controls.AddRange(new Control[] { lbWidth_Coal_Bed,lbLength,lbThickness,lbAngle,lbTowards,txtAngle,txtLength,txtThickness,txtTowards,txtWidth_Coal_Bed });
+
+            // 确定和取消按钮，绑定事件，取消直接关闭窗体
+            btn1OK = new Button() { Text = "确定", Location = new Point(80, 300), Width = 80 };
+            btn1Cancel = new Button() { Text = "取消", Location = new Point(180, 300), Width = 80 };
+         
+
 
         }
     }
@@ -311,9 +354,8 @@ namespace MyZWCADExtension
                 ed.WriteMessage($"\n巷道类型: {form.TunnelType}");
                 ed.WriteMessage($"\n宽度: {form.WidthValue}");
                 ed.WriteMessage($"\n高度: {form.HeightValue}");
-                ed.WriteMessage($"\n坐标X: {form.CoordX}");
-                ed.WriteMessage($"\n坐标Y: {form.CoordY}");
-                ed.WriteMessage($"\n坐标Z: {form.CoordZ}");
+                ed.WriteMessage($"\n坐标X: {form.RadiusValue}");
+                ed.WriteMessage($"\n坐标Y: {form.LenValue}");
                 ed.WriteMessage("\n--- 结束绘图参数输出 ---");
 
                 // TODO: 这里写绘图逻辑，使用这些参数
