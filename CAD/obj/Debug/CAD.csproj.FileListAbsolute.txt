@@ -16,3 +16,11 @@ C:\Users\24257\Desktop\CAD-main\CAD\bin\Debug\CAD.dll
 C:\Users\24257\Desktop\CAD-main\CAD\bin\Debug\CAD.pdb
 C:\Users\24257\Desktop\CAD-main\CAD\obj\Debug\CAD.dll
 C:\Users\24257\Desktop\CAD-main\CAD\obj\Debug\CAD.pdb
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\bin\Debug\CAD.dll
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\bin\Debug\CAD.pdb
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\CAD.csproj.AssemblyReference.cache
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\Interop.ZWCAD.dll
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\CAD.csproj.ResolveComReference.cache
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\CAD.csproj.CoreCompileInputs.cache
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\CAD.dll
+C:\Users\24257\Desktop\CAD-main123\CAD-main\CAD\obj\Debug\CAD.pdb
